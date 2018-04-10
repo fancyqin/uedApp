@@ -11,27 +11,27 @@ import TodoPage from '../Todo/TodoList';
 
 import px2dp from '../../util/px2dp';
 
-class TabItem extends Component {
-    constructor(props){
-        super(props);
+// class TabItem extends Component {
+//     constructor(props){
+//         super(props);
         
-    }
+//     }
 
     
 
-    render(){
-        <TabNavigator.Item
-            selected={this.props.getSelectTab() === this.props.selectedTab}
-            title = {this.props.title}
-            selectedTitleStyle={{color: "#574435"}}
-            renderIcon={() => <Icon name={this.props.iconName} size={px2dp(22)} color="#999"/>}
-            renderSelectedIcon={() => <Icon name={this.props.iconName} size={px2dp(22)} color="#574435"/>}
-            onPress={this.props.setSelectTab(this.props.selectedTab)}
-            >
-            <Text>{this.props.title}</Text>
-        </TabNavigator.Item>
-    }
-}
+//     render(){
+//         <TabNavigator.Item
+//             selected={this.props.getSelectTab() === this.props.selectedTab}
+//             title = {this.props.title}
+//             selectedTitleStyle={{color: "#574435"}}
+//             renderIcon={() => <Icon name={this.props.iconName} size={px2dp(22)} color="#999"/>}
+//             renderSelectedIcon={() => <Icon name={this.props.iconName} size={px2dp(22)} color="#574435"/>}
+//             onPress={this.props.setSelectTab(this.props.selectedTab)}
+//             >
+//             <Text>{this.props.title}</Text>
+//         </TabNavigator.Item>
+//     }
+// }
 
 export default class Home extends Component{
 
@@ -41,18 +41,21 @@ export default class Home extends Component{
     }
     
     state = {
-        selectTab: 'sands'
+        selectedTab: 'sands'
     }
 
-    getSelectTab(){
-        return this.state.selectTab;
-    }
-
-    setSelectTab(selectTab){
-        this.setState({
-            selectTab
-        });
-        console.log(11)
+    _renderTab(Component, selectedTab, title, iconName) {
+        return (
+            <TabNavigator.Item
+                selected={this.state.selectedTab === selectedTab}
+                title = {title}
+                selectedTitleStyle={{color: "#574435"}}
+                renderIcon={() => <Icon name={iconName} size={px2dp(22)} color="#999"/>}
+                renderSelectedIcon={() => <Icon name={iconName} size={px2dp(22)} color="#574435"/>}
+                onPress={() => this.setState({selectedTab: selectedTab})}>
+                <Component {...this.props}/>
+            </TabNavigator.Item>
+        )
     }
 
     render(){
@@ -60,14 +63,10 @@ export default class Home extends Component{
         return(
             <View style={styles.container}>
                 <TabNavigator tabBarStyle={{opacity: 0.9,}} sceneStyle={{paddingBottom: 0}} >
-                    <TabItem title="SANDS" component={SandsPage} selectedTab='sands' iconName='home'
-                     setSelectTab={select => this.setSelectTab(select)} getSelectTab={this.getSelectTab} />
-                    <TabItem title="TODO" component={TodoPage} selectedTab='todo' iconName='home'
-                     setSelectTab={select => this.setSelectTab(select)}  getSelectTab={this.getSelectTab} />
-                    <TabItem title="BOOKS" component={BookPage} selectedTab='book' iconName='home'
-                     setSelectTab={select => this.setSelectTab(select)}  getSelectTab={this.getSelectTab} />
-                    <TabItem title="SETTING" component={SettingPage} selectedTab='setting' iconName='home'
-                     setSelectTab={select => this.setSelectTab(select)}  getSelectTab={this.getSelectTab} />
+                    {this._renderTab(TodoPage,'todo','TODO','check-square')}
+                    {this._renderTab(SandsPage,'sands','SANDS','zap')}
+                    {this._renderTab(BookPage,'book','BOOK','book')}
+                    {this._renderTab(SettingPage,'setting','SETTING','settings')}
                 </TabNavigator>
             </View>
         )
