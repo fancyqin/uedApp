@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View,Text } from 'react-native';
+import { View,Text,StyleSheet } from 'react-native';
 
 
 
@@ -29,7 +29,7 @@ export default class BlinkApp extends Component{
 
     render(){
         return(
-            <View>
+            <View style={styles.container}>
                 <Blink text="I love react-native" />
                 <Blink text='Yes blinking is so great' />
                 <Blink text='Why did they ever take this out of HTML' />
@@ -37,4 +37,13 @@ export default class BlinkApp extends Component{
         )
     }
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: '#fff',
+        alignItems: 'center',
+        justifyContent: 'center',
+    }
+});
 

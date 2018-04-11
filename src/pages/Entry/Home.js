@@ -11,27 +11,6 @@ import TodoPage from '../Todo/TodoList';
 
 import px2dp from '../../util/px2dp';
 
-// class TabItem extends Component {
-//     constructor(props){
-//         super(props);
-        
-//     }
-
-    
-
-//     render(){
-//         <TabNavigator.Item
-//             selected={this.props.getSelectTab() === this.props.selectedTab}
-//             title = {this.props.title}
-//             selectedTitleStyle={{color: "#574435"}}
-//             renderIcon={() => <Icon name={this.props.iconName} size={px2dp(22)} color="#999"/>}
-//             renderSelectedIcon={() => <Icon name={this.props.iconName} size={px2dp(22)} color="#574435"/>}
-//             onPress={this.props.setSelectTab(this.props.selectedTab)}
-//             >
-//             <Text>{this.props.title}</Text>
-//         </TabNavigator.Item>
-//     }
-// }
 
 export default class Home extends Component{
 
