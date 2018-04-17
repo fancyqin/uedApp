@@ -1,42 +1,50 @@
 import React, { Component } from 'react';
 import { View,Text,StyleSheet } from 'react-native';
+import ScrollableTabView,{ScrollableTabBar} from 'react-native-scrollable-tab-view'
 
 
 
-class Blink extends Component {
-    constructor(props) {
+
+class SandsListTabPage extends Component{
+    constructor(props){
         super(props);
-        this.state = {
-            showText: true
-        }
-        setInterval(() => {
-            this.setState(previousState => {
-                return {showText: !previousState.showText}
-            });
-        },1000);
+        
     }
-
     render(){
-        let display = this.state.showText ? this.props.text : ' ';
         return (
-            <Text>{display}</Text>
+            <Text>{this.props.content}</Text>
         )
     }
 
+
 }
 
-export default class BlinkApp extends Component{
+export default class SandsList extends Component{
 
     render(){
         return(
             <View style={styles.container}>
-                <Blink text="I love react-native" />
-                <Blink text='Yes blinking is so great' />
-                <Blink text='Why did they ever take this out of HTML' />
+                <ScrollableTabView 
+                tabBarBackgroundColor='blue'
+                tabBarInactiveTextColor="mintcream"
+                tabBarActiveTextColor="white"
+                tabBarUnderlineStyle ={{backgroundColor:'#e7e7e7',height:2}}
+                renderTabBar={()=> <ScrollableTabBar/>  }
+                >
+                    <SandsListTabPage {...this.props} tabLabel="交互" content="交互" />
+                    <SandsListTabPage {...this.props} tabLabel="前端" content="前端" />
+                    <SandsListTabPage {...this.props} tabLabel="视觉" content="视觉" />
+               </ScrollableTabView>
+               <Text>fuck</Text>
             </View>
+            
         )
     }
 }
+
+
+
+
 
 const styles = StyleSheet.create({
     container: {
