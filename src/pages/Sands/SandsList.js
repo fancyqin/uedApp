@@ -72,7 +72,7 @@ class SandsListTabPage extends PureComponent{
             this.setState({
                 refreshing: false
             })
-        },2000)
+        },5000)
     }
     
     render(){
@@ -82,7 +82,7 @@ class SandsListTabPage extends PureComponent{
                 style={styles.sandItemWrap}
                 data={this.state.dataSource}
                 renderItem={({item}) => this.renderRowItem(item)}
-                onRefresh = {this.onRefresh}
+                onRefresh = {() => this.onRefresh}
                 refreshing = {this.state.refreshing}
                 />
             </View>
