@@ -63,16 +63,43 @@ class SandsListTabPage extends PureComponent{
         )
     }
 
-    onRefresh(){
+
+    //下拉刷新
+    count = 0;
+    onRefresh =() =>{
         this.setState({
             refreshing: true
         })
 
-        setTimeout(()=>{
+        const timer = setTimeout(()=>{
+            clearTimeout(timer);
+            this.state.dataSource.unshift(
+                {
+                    title:'下拉刷新的新增数据---'+ this.count,
+                    author:'比尔盖茨',
+                    votes:[1,23,4,5,66,4,4],
+                    addTime:'2018-4-22',
+                    commentCount: parseInt(Math.random()*1000)
+                }
+            )
+            this.count ++;
+
             this.setState({
                 refreshing: false
             })
-        },5000)
+        },1000)
+    }
+    //上拉加载
+    count2 = 0
+    onEndReached = ()=>{
+        this.state.dataSource.push({
+            title:'上拉刷新的新增数据---'+ this.count2,
+            author:'乔布斯',
+            votes:[1,23,4,5,66,4],
+            addTime:'2011-3-23',
+            commentCount: parseInt(Math.random()*1000)
+        })
+        this.count2++
     }
     
     render(){
@@ -82,8 +109,10 @@ class SandsListTabPage extends PureComponent{
                 style={styles.sandItemWrap}
                 data={this.state.dataSource}
                 renderItem={({item}) => this.renderRowItem(item)}
-                onRefresh = {() => this.onRefresh}
+                onRefresh = {this.onRefresh}
                 refreshing = {this.state.refreshing}
+                onEndReachedThreshold = {0.1}
+                onEndReached = {this.onEndReached}
                 />
             </View>
         )
@@ -102,7 +131,7 @@ export default class SandsList extends Component{
 
     render(){
         return(
-            <View style={{flex:1}}>
+            <View style={styles.sandList}>
                 <Navbar title="SANDS" />
                 <ScrollableTabView 
                     tabBarBackgroundColor='white'
@@ -128,6 +157,14 @@ export default class SandsList extends Component{
 
 
 const styles = StyleSheet.create({
+    sandList:{
+        flex:1,
+        position:'absolute',
+        top: 0,
+        left:0,
+        right:0,
+        bottom:50,
+    },
     container: {
         flex: 1,
         backgroundColor: 'white',
@@ -137,9 +174,8 @@ const styles = StyleSheet.create({
 
     sandItemWrap:{
         flex:1,
-        backgroundColor:'#f3f5f7',
         paddingTop: 10,
-        paddingBottom: 60,
+        paddingBottom: 20,
     },
     sandsListItem:{
         backgroundColor:'white',
