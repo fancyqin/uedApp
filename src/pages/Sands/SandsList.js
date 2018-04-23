@@ -23,19 +23,59 @@ class SandsListTabPage extends PureComponent{
         this.loadData();
     }
 
-    loadData(){
 
+    getDataByTag(tag){
+        let data = [];
+        SandsData.info.data.forEach(item => {
+            if(item.tag.indexOf(tag) > -1){
+                data.push(item);
+            }
+        });
+        return data;
+    }
+
+    loadData(){
+        let tag = this.props.tag;
+        let listData;
+        if(tag === 'all'){
+            listData = SandsData.info.data
+        }else{
+            listData = this.getDataByTag(tag);
+        }
         this.setState({
-            dataSource: SandsData.info.data
+            dataSource: listData
         })
     }
+
+    //选择详情
+    selectItem(it){
+        
+        console.log(it);
+    }
+
+    //点赞    
+    thumbUp(it){
+        console.log(it);
+        it.thumbUp = !it.thumbUp;
+        it.votes.push('1')
+        
+    }
+
+    renderThumbUp(it){
+        if(it.thumbUp){
+            return <Icon style={{marginRight:5}}  name="thumbs-up" size={16} color='#f00' />
+        }else{
+            return <Icon style={{marginRight:5}}  name="thumbs-up" size={16} color='#888' />
+        }
+    }
+    
 
     renderRowItem(it){
         
         return (
             <View style={styles.sandsListItem}>
-                <TouchableOpacity style={styles.sandMain} onPress={this.props.selectItem} >
-                    <View style={styles.sandItemText} onPress={this.props.onSelect}>
+                <TouchableOpacity style={styles.sandMain} onPress={() => this.selectItem(it)} >
+                    <View style={styles.sandItemText}>
                         <Text style={styles.sandTitle} numberOfLines={2}>{it.title}</Text>
                         <Text style={styles.sandAuthor}>{it.author}</Text>
                         <Text style={styles.sandTime}>{moment(it.addTime).format('YYYY-MM-DD')}</Text>
@@ -47,8 +87,10 @@ class SandsListTabPage extends PureComponent{
                     <View style={styles.otherLeft}>
                     
                         <View style={{flexDirection:'row'}}>
-                            <TouchableOpacity onPress={this.props.thumbUp}>
-                                <Icon style={{marginRight:5}}  name="thumbs-up" size={16} color="#999" />
+                            <TouchableOpacity onPress={() => this.thumbUp(it)}>
+                                
+                                {this.renderThumbUp(it)}
+                                
                             </TouchableOpacity>
                             <Text style={{color: '#555'}}>{it.votes.length}</Text>
                         </View>
@@ -140,10 +182,10 @@ export default class SandsList extends Component{
                     tabBarUnderlineStyle ={{backgroundColor:'#574435',height:2}}
                     renderTabBar={()=> <ScrollableTabBar/>}
                 >
-                    <SandsListTabPage {...this.props} tabLabel="全部" contents="全部" />
-                    <SandsListTabPage {...this.props} tabLabel="交互" contents="交互" />
-                    <SandsListTabPage {...this.props} tabLabel="视觉" contents="视觉" />
-                    <SandsListTabPage {...this.props} tabLabel="前端" contents="前端" />
+                    <SandsListTabPage {...this.props} tabLabel="全部" contents="全部" tag="all" />
+                    <SandsListTabPage {...this.props} tabLabel="交互" contents="交互" tag="ux" />
+                    <SandsListTabPage {...this.props} tabLabel="视觉" contents="视觉" tag="ui" />
+                    <SandsListTabPage {...this.props} tabLabel="前端" contents="前端" tag="fe" />
                     
                 </ScrollableTabView>
             </View>
