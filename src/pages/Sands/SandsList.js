@@ -78,7 +78,7 @@ class SandsListTabPage extends PureComponent{
                     title:'下拉刷新的新增数据---'+ this.count,
                     author:'比尔盖茨',
                     votes:[1,23,4,5,66,4,4],
-                    addTime:'2018-4-22',
+                    addTime:'2018-04-22',
                     commentCount: parseInt(Math.random()*1000)
                 }
             )
@@ -96,7 +96,7 @@ class SandsListTabPage extends PureComponent{
             title:'上拉刷新的新增数据---'+ this.count2,
             author:'乔布斯',
             votes:[1,23,4,5,66,4],
-            addTime:'2011-3-23',
+            addTime:'2011-03-23',
             commentCount: parseInt(Math.random()*1000)
         })
         this.count2++
