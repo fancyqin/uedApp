@@ -7,6 +7,80 @@ import Navbar from '../../component/Navbar';
 import SandsData from '../../../res/data/sands.json';
 
 
+
+class SandItemCell extends PureComponent{
+    
+    constructor(props){
+        super(props);
+        this.state={
+            thumbUp: this.props.thumbUp,
+            votes: this.props.votes.length
+        }
+    }
+
+
+    //选择详情
+    selectItem(){
+        
+    }
+
+    //点赞    
+    thumbUp(){
+        let votes = this.state.thumbUp ? this.state.votes - 1: this.state.votes + 1
+        
+        this.setState({
+            thumbUp: !this.state.thumbUp,
+            votes
+        })
+    }
+
+    renderThumbUp(){
+        if(this.state.thumbUp){
+            return <Icon style={{marginRight:5}}  name="thumbs-up" size={16} color='#f60' />
+        }else{
+            return <Icon style={{marginRight:5}}  name="thumbs-up" size={16} color='#888' />
+        }
+    }
+    
+
+    render(){
+        return (
+            <View style={styles.sandsListItem}>
+                <TouchableOpacity style={styles.sandMain} onPress={() => this.selectItem()} >
+                    <View style={styles.sandItemText}>
+                        <Text style={styles.sandTitle} numberOfLines={2}>{this.props.title}</Text>
+                        <Text style={styles.sandAuthor}>{this.props.author}</Text>
+                        <Text style={styles.sandTime}>{moment(this.props.addTime).format('YYYY-MM-DD')}</Text>
+                    </View>
+                    <Image style={{width:140,height:100}} source={require('../../../res/img/img.jpg')}  />
+                </TouchableOpacity>
+                <View style={styles.sandOtherWrap}>
+                    
+                    <View style={styles.otherLeft}>
+                    
+                        <View style={{flexDirection:'row'}}>
+                            <TouchableOpacity onPress={() => this.thumbUp()}>
+                                
+                                {this.renderThumbUp()}
+                                
+                            </TouchableOpacity>
+                            <Text style={{color: '#555'}}>{this.state.votes}</Text>
+                        </View>
+                        <View style={{flexDirection:'row',marginLeft:20}}>
+                            <Icon style={{marginRight:5,marginLeft:20}} name="more-horizontal" size={16} color="#999" />
+                            <Text style={{color: '#555'}}>{this.props.commentCount > 999 ? 999:this.props.commentCount}</Text>
+                        </View>
+                    </View>
+                    <TouchableOpacity><Icon name="share-2" size={16} color="#999" /></TouchableOpacity>
+                </View>
+            </View> 
+        )
+    }
+
+}
+
+
+
 class SandsListTabPage extends PureComponent{
     constructor(props){
         super(props);
@@ -47,61 +121,12 @@ class SandsListTabPage extends PureComponent{
         })
     }
 
-    //选择详情
-    selectItem(it){
-        
-        console.log(it);
-    }
-
-    //点赞    
-    thumbUp(it){
-        console.log(it);
-        it.thumbUp = !it.thumbUp;
-        it.votes.push('1')
-        
-    }
-
-    renderThumbUp(it){
-        if(it.thumbUp){
-            return <Icon style={{marginRight:5}}  name="thumbs-up" size={16} color='#f00' />
-        }else{
-            return <Icon style={{marginRight:5}}  name="thumbs-up" size={16} color='#888' />
-        }
-    }
-    
+   
 
     renderRowItem(it){
         
         return (
-            <View style={styles.sandsListItem}>
-                <TouchableOpacity style={styles.sandMain} onPress={() => this.selectItem(it)} >
-                    <View style={styles.sandItemText}>
-                        <Text style={styles.sandTitle} numberOfLines={2}>{it.title}</Text>
-                        <Text style={styles.sandAuthor}>{it.author}</Text>
-                        <Text style={styles.sandTime}>{moment(it.addTime).format('YYYY-MM-DD')}</Text>
-                    </View>
-                    <Image style={{width:140,height:100}} source={require('../../../res/img/img.jpg')}  />
-                </TouchableOpacity>
-                <View style={styles.sandOtherWrap}>
-                    
-                    <View style={styles.otherLeft}>
-                    
-                        <View style={{flexDirection:'row'}}>
-                            <TouchableOpacity onPress={() => this.thumbUp(it)}>
-                                
-                                {this.renderThumbUp(it)}
-                                
-                            </TouchableOpacity>
-                            <Text style={{color: '#555'}}>{it.votes.length}</Text>
-                        </View>
-                        <View style={{flexDirection:'row',marginLeft:20}}>
-                            <Icon style={{marginRight:5,marginLeft:20}} name="more-horizontal" size={16} color="#999" />
-                            <Text style={{color: '#555'}}>{it.commentCount > 999 ? 999:it.commentCount}</Text>
-                        </View>
-                    </View>
-                    <TouchableOpacity><Icon name="share-2" size={16} color="#999" /></TouchableOpacity>
-                </View>
-            </View> 
+            <SandItemCell {...it} />
         )
     }
 
@@ -182,10 +207,10 @@ export default class SandsList extends Component{
                     tabBarUnderlineStyle ={{backgroundColor:'#574435',height:2}}
                     renderTabBar={()=> <ScrollableTabBar/>}
                 >
-                    <SandsListTabPage {...this.props} tabLabel="全部" contents="全部" tag="all" />
-                    <SandsListTabPage {...this.props} tabLabel="交互" contents="交互" tag="ux" />
-                    <SandsListTabPage {...this.props} tabLabel="视觉" contents="视觉" tag="ui" />
-                    <SandsListTabPage {...this.props} tabLabel="前端" contents="前端" tag="fe" />
+                    <SandsListTabPage {...this.props} tabLabel="全部" tag="all" />
+                    <SandsListTabPage {...this.props} tabLabel="交互" tag="ux" />
+                    <SandsListTabPage {...this.props} tabLabel="视觉" tag="ui" />
+                    <SandsListTabPage {...this.props} tabLabel="前端" tag="fe" />
                     
                 </ScrollableTabView>
             </View>
