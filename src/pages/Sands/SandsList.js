@@ -1,10 +1,13 @@
 import React, { Component,PureComponent } from 'react';
-import { View,Text,StyleSheet,FlatList,TouchableOpacity,Image } from 'react-native';
-import ScrollableTabView,{ScrollableTabBar} from 'react-native-scrollable-tab-view';
+import { View,Text,StyleSheet,FlatList,TouchableOpacity,Image,Share } from 'react-native';
+// import ScrollableTabView,{ScrollableTabBar} from 'react-native-scrollable-tab-view';
 import Icon from 'react-native-vector-icons/Feather';
+import Toast from 'react-native-easy-toast';
 import moment from 'moment';
-import Navbar from '../../component/Navbar';
-import SandsData from '../../../res/data/sands.json';
+
+import SearchBar from '../../common/SearchBar'
+
+import SandsData from '../../resources/data/sands.json';
 
 
 
@@ -21,7 +24,12 @@ class SandItemCell extends PureComponent{
 
     //选择详情
     selectItem(){
-        
+        this.props.navigation.navigate('SandsDetail',{...this.props})
+    }
+
+    //跳转到详情评论
+    selectItemWithComment(){
+        this.props.navigation.navigate('SandsDetail',{...this.props,withCommentJump:true})
     }
 
     //点赞    
@@ -33,15 +41,30 @@ class SandItemCell extends PureComponent{
             votes
         })
     }
+    //分享
+    shareItem(){
 
-    renderThumbUp(){
-        if(this.state.thumbUp){
-            return <Icon style={{marginRight:5}}  name="thumbs-up" size={16} color='#f60' />
-        }else{
-            return <Icon style={{marginRight:5}}  name="thumbs-up" size={16} color='#888' />
+        _showResult = (result) => {
+            if (result.action === Share.sharedAction) {
+                this.refs.shareToast.show(`分享成功`)
+            } else if (result.action === Share.dismissedAction) {
+                this.refs.shareToast.show(`分享取消`)
+            }
         }
+        
+
+        Share.share({
+            message: this.props.title,
+            title: this.props.title
+        }, {
+            dialogTitle: '分享一篇sands文章',
+        })
+        .then(_showResult)
+        .catch((error) => console.error(error) );
+
+        
+        
     }
-    
 
     render(){
         return (
@@ -52,27 +75,27 @@ class SandItemCell extends PureComponent{
                         <Text style={styles.sandAuthor}>{this.props.author}</Text>
                         <Text style={styles.sandTime}>{moment(this.props.addTime).format('YYYY-MM-DD')}</Text>
                     </View>
-                    <Image style={{width:140,height:100}} source={require('../../../res/img/img.jpg')}  />
+                    <Image style={{width:140,height:100}} source={require('../../img/img.jpg')}  />
                 </TouchableOpacity>
                 <View style={styles.sandOtherWrap}>
                     
                     <View style={styles.otherLeft}>
                     
-                        <View style={{flexDirection:'row'}}>
-                            <TouchableOpacity onPress={() => this.thumbUp()}>
-                                
-                                {this.renderThumbUp()}
-                                
-                            </TouchableOpacity>
-                            <Text style={{color: '#555'}}>{this.state.votes}</Text>
-                        </View>
-                        <View style={{flexDirection:'row',marginLeft:20}}>
+                        <TouchableOpacity style={{flexDirection:'row'}} onPress={() => this.thumbUp()}>
+                            
+                            <Icon style={{marginRight:5}}  name="thumbs-up" size={16} 
+                            color={this.state.thumbUp?'#f60':'#888'} />
+                            <Text style={{color: '#555'}}>{this.state.votes > 999 ? 999:this.state.votes}</Text>
+                        </TouchableOpacity>
+                        
+                        <TouchableOpacity style={{flexDirection:'row',marginLeft:20}} onPress={() => this.selectItemWithComment()}>
                             <Icon style={{marginRight:5,marginLeft:20}} name="more-horizontal" size={16} color="#999" />
                             <Text style={{color: '#555'}}>{this.props.commentCount > 999 ? 999:this.props.commentCount}</Text>
-                        </View>
+                        </TouchableOpacity>
                     </View>
-                    <TouchableOpacity><Icon name="share-2" size={16} color="#999" /></TouchableOpacity>
+                    <TouchableOpacity onPress={()=>this.shareItem()}><Icon name="share-2" size={16} color="#888" /></TouchableOpacity>
                 </View>
+                <Toast ref="shareToast" position="top" />
             </View> 
         )
     }
@@ -81,16 +104,20 @@ class SandItemCell extends PureComponent{
 
 
 
-class SandsListTabPage extends PureComponent{
+export default class SandsListTabPage extends PureComponent{
+    
     constructor(props){
         super(props);
-        
         this.state = {
             dataSource: [],
             refreshing: false       
             
         }
         
+    }
+
+    componentWillUnmount(){
+        clearTimeout(this.timer);
     }
 
     componentDidMount(){
@@ -109,6 +136,9 @@ class SandsListTabPage extends PureComponent{
     }
 
     loadData(){
+        this.setState({
+            refreshing: true
+        })
         let tag = this.props.tag;
         let listData;
         if(tag === 'all'){
@@ -116,42 +146,45 @@ class SandsListTabPage extends PureComponent{
         }else{
             listData = this.getDataByTag(tag);
         }
-        this.setState({
-            dataSource: listData
-        })
-    }
-
-   
-
-    renderRowItem(it){
+        setTimeout(()=>{
+            this.setState({
+                dataSource: listData,
+                refreshing: false,
+                noMoreData: false,
+            })
+        },500)
         
-        return (
-            <SandItemCell {...it} />
-        )
     }
+
+    
+
 
 
     //下拉刷新
     count = 0;
+    timer = null
     onRefresh =() =>{
         this.setState({
             refreshing: true
         })
 
-        const timer = setTimeout(()=>{
-            clearTimeout(timer);
-            this.state.dataSource.unshift(
+        this.timer = setTimeout(()=>{
+            let arr = [].concat(this.state.dataSource);
+            arr.unshift(
                 {
+                    _id:Date.now + Math.random() + '',
                     title:'下拉刷新的新增数据---'+ this.count,
                     author:'比尔盖茨',
                     votes:[1,23,4,5,66,4,4],
                     addTime:'2018-04-22',
-                    commentCount: parseInt(Math.random()*1000)
+                    commentCount: parseInt(Math.random()*1000),
+                    tag:[]
                 }
             )
             this.count ++;
 
             this.setState({
+                dataSource: arr,
                 refreshing: false
             })
         },1000)
@@ -159,14 +192,29 @@ class SandsListTabPage extends PureComponent{
     //上拉加载
     count2 = 0
     onEndReached = ()=>{
-        this.state.dataSource.push({
+        if(this.count2 > 5){
+            this.setState({
+                noMoreData: true
+            })
+            return;
+        }
+        // let arr = []
+        let arr = [].concat(this.state.dataSource);
+            
+        arr.push({
+            _id: Date.now + Math.random() + '',
             title:'上拉刷新的新增数据---'+ this.count2,
             author:'乔布斯',
             votes:[1,23,4,5,66,4],
             addTime:'2011-03-23',
-            commentCount: parseInt(Math.random()*1000)
+            commentCount: parseInt(Math.random()*1000),
+            tag:[]
         })
-        this.count2++
+        this.count2++;
+
+        this.setState({
+            dataSource: arr
+        })
     }
     
     render(){
@@ -175,7 +223,9 @@ class SandsListTabPage extends PureComponent{
                 <FlatList
                 style={styles.sandItemWrap}
                 data={this.state.dataSource}
-                renderItem={({item}) => this.renderRowItem(item)}
+                renderItem={({item,index}) => <SandItemCell key={index} {...this.props} {...item} /> }
+                keyExtractor={(item,index)=> item._id }
+                ListFooterComponent={ this.state.noMoreData ? <Text style={{marginBottom: 20,textAlign:'center',color: '#888'}}>no more data</Text> :false }
                 onRefresh = {this.onRefresh}
                 refreshing = {this.state.refreshing}
                 onEndReachedThreshold = {0.1}
@@ -187,38 +237,6 @@ class SandsListTabPage extends PureComponent{
 
 
 }
-
-export default class SandsList extends Component{
-
-    constructor(props){
-        super(props);
-    }
-
-
-
-    render(){
-        return(
-            <View style={styles.sandList}>
-                <Navbar title="SANDS" />
-                <ScrollableTabView 
-                    tabBarBackgroundColor='white'
-                    tabBarActiveTextColor="#574435"
-                    tabBarInactiveTextColor="#999"
-                    tabBarUnderlineStyle ={{backgroundColor:'#574435',height:2}}
-                    renderTabBar={()=> <ScrollableTabBar/>}
-                >
-                    <SandsListTabPage {...this.props} tabLabel="全部" tag="all" />
-                    <SandsListTabPage {...this.props} tabLabel="交互" tag="ux" />
-                    <SandsListTabPage {...this.props} tabLabel="视觉" tag="ui" />
-                    <SandsListTabPage {...this.props} tabLabel="前端" tag="fe" />
-                    
-                </ScrollableTabView>
-            </View>
-            
-        )
-    }
-}
-
 
 
 
@@ -247,8 +265,8 @@ const styles = StyleSheet.create({
     sandsListItem:{
         backgroundColor:'white',
         padding:10,
-        marginLeft:10,
-        marginRight: 10,
+        marginLeft:1,
+        marginRight: 1,
         marginBottom: 10,
         borderRadius:2,
         //iOS的阴影
@@ -272,14 +290,14 @@ const styles = StyleSheet.create({
         flexShrink: 1,
     },
     sandTitle:{
-        fontSize: 18,
+        fontSize: 16,
         display:'flex',
         fontWeight: 'bold',
         marginBottom: 5
     },
     sandAuthor:{
         color: '#888',
-        fontSize: 16,
+        fontSize: 14,
         marginBottom: 10
     },
     sandTime:{
