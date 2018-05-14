@@ -5,7 +5,6 @@ import Icon from 'react-native-vector-icons/Feather';
 import Toast from 'react-native-easy-toast';
 import moment from 'moment';
 
-import SearchBar from '../../common/SearchBar'
 
 import SandsData from '../../resources/data/sands.json';
 
@@ -75,7 +74,7 @@ class SandItemCell extends PureComponent{
                         <Text style={styles.sandAuthor}>{this.props.author}</Text>
                         <Text style={styles.sandTime}>{moment(this.props.addTime).format('YYYY-MM-DD')}</Text>
                     </View>
-                    <Image style={{width:140,height:100}} source={require('../../img/img.jpg')}  />
+                    <Image style={{width:140,height:100}} source={require('../../../res/img/img.jpg')}  />
                 </TouchableOpacity>
                 <View style={styles.sandOtherWrap}>
                     

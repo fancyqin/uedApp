@@ -11,8 +11,7 @@ export default class LoginIn extends Component{
     render(){
         return(
             <View style={styles.container}>
-                <Text onPress={()=>{this.props.navigation.navigate('Main')}}>Login In</Text>
-                
+                <Text onPress={()=>{this.props.navigation.navigate('MainTab')}}>Login In</Text>
             </View>
         )
     }
