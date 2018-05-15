@@ -3,7 +3,6 @@ import { StatusBar } from 'react-native'
 import {
     createStackNavigator,
     createBottomTabNavigator,
-    DrawerNavigator,
 } from 'react-navigation'
 import Icon from 'react-native-vector-icons/Feather'
 
@@ -24,10 +23,15 @@ const TodoStack = createStackNavigator({
     TodoList,
 },{
     navigationOptions:{
-        title:'Have A Nice Day'
+        headerTitle: 'Have A Nice Day',
+        headerStyle: {
+            backgroundColor: '#ffc800',
+        },
+        headerTitleStyle: {
+            color: '#fff',
+        },
     }
 })
-
 
 
 const MainTab = createBottomTabNavigator({
@@ -74,8 +78,17 @@ const MainTab = createBottomTabNavigator({
                     iconName = 'user';
                     break;    
             }      
-            return <Icon name={iconName} size={24} color={focused ? tintColor : '#999'} />
-        }
+            return <Icon name={iconName} size={24} color={focused ? tintColor : '#888'} />
+        },
+        animationEnabled: false,
+        swipeEnabled: false,
+        tabBarOptions: {
+            activeTintColor: '#000',
+            inactiveTintColor: '#888',
+            style: {
+                backgroundColor: 'white',
+            },
+        },
         
     })
 })

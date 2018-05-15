@@ -5,7 +5,7 @@ import { View,Text,StyleSheet,TextInput } from 'react-native';
 export default class LoginIn extends Component{
 
     static navigationOptions = ({ navigation, screenProps }) => ({
-        header: null
+        header: null,
     })
 
     constructor(props){

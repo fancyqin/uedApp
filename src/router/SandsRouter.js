@@ -1,6 +1,7 @@
 import React, { Component, PureComponent } from 'react'
 import { View, Text, StatusBar, Animated, Easing } from 'react-native'
-import { StackNavigator, TabNavigator, TabBarTop } from 'react-navigation'
+import { createStackNavigator, createTabNavigator, TabBarTop } from 'react-navigation'
+import {SandsTabOptions} from './index';
 import SandsListTabPage from '../pages/Sands/SandsList'
 import SandsDetail from '../pages/Sands/SandsDetail'
 import ImageGallery from '../components/ImageGallery'
@@ -17,7 +18,7 @@ const TabScreen = params => {
     }
 }
 
-const SandListTabNavigator = TabNavigator(
+const SandListTabNavigator = createTabNavigator(
     {
         All: {
             screen: TabScreen({ tag: 'all' }),
@@ -129,7 +130,7 @@ const TransitionConfiguration = () => ({
     },
 })
 
-export default StackNavigator(
+const SandsStack = createStackNavigator(
     {
         SandsList: {
             screen: SandListTabNavigator,
@@ -152,18 +153,46 @@ export default StackNavigator(
                 },
                 headerTitleStyle: {
                     color: '#fff',
-                },
+                }
             },
         },
         ImageGallery: {
             screen: ImageGalleryScreen,
             navigationOptions: {
                 header: null,
-                tabBarVisible: false,
             },
         },
     },
-    {
-        transitionConfig: TransitionConfiguration,
-    },
-)
+    // {
+    //     // navigationOptions:({navigation})=>{
+    //     //     const {routeName} = navigation.state;
+    //     //     const isHide = routeName === 'SandsDetail' || routeName === 'ImageGallery'
+            
+    //     //     SandsTabOptions.navigationOptions.tabBarVisible = !isHide;            
+    //     // },
+    //     // navigationOptions:({navigation}) =>{
+    //     //     let {routeName} = navigation.state;
+    //     //     let navigationOptions = {};
+    //     //     if(routeName === 'SandsDetail'){
+    //     //         navigationOptions.tabBarVisible = false
+    //     //     }
+
+    //     //     return navigationOptions
+    //     // },
+    //     transitionConfig: TransitionConfiguration,
+    // },
+);
+SandsStack.navigationOptions = ({navigation}) =>{
+    let {routeName} = navigation.state.routes[navigation.state.index];
+    console.log(routeName)
+    let navigationOptions = {};
+    if(routeName === 'SandsDetail' || routeName === 'ImageGallery'){
+        navigationOptions.tabBarVisible = false
+    }
+
+    return navigationOptions
+}
+
+
+export default SandsStack;
+
