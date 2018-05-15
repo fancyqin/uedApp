@@ -1,11 +1,11 @@
 import React, { Component, PureComponent } from 'react'
 import { View, Text, StatusBar, Animated, Easing } from 'react-native'
 import { StackNavigator, TabNavigator, TabBarTop } from 'react-navigation'
-import SandsListTabPage from '../views/Sands/SandsList'
-import SandsDetail from '../views/Sands/SandsDetail'
+import SandsListTabPage from '../pages/Sands/SandsList'
+import SandsDetail from '../pages/Sands/SandsDetail'
 import ImageGallery from '../components/ImageGallery'
 import Icon from 'react-native-vector-icons/Feather'
-import CardStackStyleInterpolator from 'react-navigation/src/views/CardStack/CardStackStyleInterpolator'
+import CardStackStyleInterpolator from 'react-navigation/src/views/StackView/StackViewStyleInterpolator.js'
 
 const mainColor = '#35a954'
 

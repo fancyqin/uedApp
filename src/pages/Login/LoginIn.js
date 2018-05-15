@@ -1,8 +1,12 @@
 import React, { Component } from 'react';
-import { View,Text,StyleSheet } from 'react-native';
+import { View,Text,StyleSheet,TextInput } from 'react-native';
 
 
 export default class LoginIn extends Component{
+
+    static navigationOptions = ({ navigation, screenProps }) => ({
+        header: null
+    })
 
     constructor(props){
         super(props);
